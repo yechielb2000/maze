@@ -49,7 +49,6 @@ public class Maze extends JFrame {
         this.columns = values.length;
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    //    this.setLocationRelativeTo(null);
         GridLayout gridLayout = new GridLayout(rows, columns);
         this.setLayout(gridLayout);
         for (int i = 0; i < rows * columns; i++) {
@@ -65,7 +64,7 @@ public class Maze extends JFrame {
         }
         this.setVisible(true);
         this.setSize(Definitions.WINDOW_WIDTH, Definitions.WINDOW_HEIGHT);
-        this.setResizable(false);
+        this.setResizable(true);
     }
 
     public void checkWayOut() {
@@ -119,19 +118,18 @@ public class Maze extends JFrame {
     private List<Point> findNeighbors(int x, int y){
 
         List<Point> neighbors = new ArrayList<>();
-      
-        if(y < this.values.length - 1 && !this.visited[x][y + 1] && values[x][y + 1] == Definitions.EMPTY)
+
+        if(y > 0 && !visited[x][y - 1] && values[x][y - 1] == Definitions.EMPTY)
+        neighbors.add(new Point(x, y - 1));
+
+        if(x > 0 && !visited[x - 1][y] && values[x - 1][y] == Definitions.EMPTY)
+        neighbors.add(new Point(x - 1, y));   
+        
+        if(x < values.length - 1 && !visited[x + 1][y] && values[x + 1][y] == Definitions.EMPTY)
+            neighbors.add(new Point(x + 1, y)); 
+             
+        if(y < values.length - 1 && !visited[x][y + 1] && values[x][y + 1] == Definitions.EMPTY)
             neighbors.add(new Point(x, y + 1));       
-        
-        if(x < this.values.length - 1 && !this.visited[x + 1][y] && values[x + 1][y] == Definitions.EMPTY)
-            neighbors.add(new Point(x + 1, y));
-            
-        if(y > 0 && !this.visited[x][y - 1] && values[x][y - 1] == Definitions.EMPTY) 
-            neighbors.add(new Point(x, y - 1));
-         
-        if(x > 0 && !this.visited[x - 1][y] && values[x - 1][y] == Definitions.EMPTY)
-            neighbors.add(new Point(x - 1, y));    
-        
         return neighbors;
     }
 
