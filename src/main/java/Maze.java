@@ -2,7 +2,13 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Queue;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
+import java.util.Stack;
+import java.util.stream.Collectors;
 
 public class Maze extends JFrame {
 
@@ -17,9 +23,11 @@ public class Maze extends JFrame {
     private int algorithm;
 
     public Maze(int algorithm, int size, int startRow, int startColumn) {
+
         this.algorithm = algorithm;
         Random random = new Random();
         this.values = new int[size][];
+
         for (int i = 0; i < values.length; i++) {
             int[] row = new int[size];
             for (int j = 0; j < row.length; j++) {
@@ -31,6 +39,7 @@ public class Maze extends JFrame {
             }
             values[i] = row;
         }
+
         values[0][0] = Definitions.EMPTY;
         values[size - 1][size - 1] = Definitions.EMPTY;
         this.visited = new boolean[this.values.length][this.values.length];
@@ -64,9 +73,16 @@ public class Maze extends JFrame {
         new Thread(() -> {
             boolean result = false;
             switch (this.algorithm) {
-                case Definitions.ALGORITHM_DFS:
+                case Definitions.ALGORITHM_DFS:                   
+                    Stack<Node> stack = new Stack<Node>();
+                    stack.push(new Node(startRow, startColumn));                   
+                    result = runAlgorithm(stack);
                     break;
-                case Definitions.ALGORITHM_BFS:
+                    
+                case Definitions.ALGORITHM_BFS:                   
+                    Queue<Node> queue = new LinkedList<>();
+                    queue.add(new Node(startRow, startColumn));
+                    result = runAlgorithm(queue);                   
                     break;
             }
             JOptionPane.showMessageDialog(null,  result ? "FOUND SOLUTION" : "NO SOLUTION FOR THIS MAZE");
@@ -74,6 +90,50 @@ public class Maze extends JFrame {
         }).start();
     }
 
+    private boolean runAlgorithm(Collection<Node> collection) {
+
+        while (!collection.isEmpty()) {
+            
+            Node node;
+            if(collection instanceof Queue) {
+                node = ((Queue<Node>) collection).remove();
+            }else {
+                node = ((Stack<Node>) collection).pop();
+            }
+            
+            int x = node.getPoint().x, y = node.getPoint().y;
+
+            if(!this.visited[x][y]) {
+                setSquareAsVisited(x, y, true);
+            }             
+
+            collection.addAll(findNeighbors(x, y));
+
+            if(x == this.values.length - 1 && y == this.values.length - 1)
+                return true;
+        }
+
+        return false;
+    }
+
+    private List<Node> findNeighbors(int x, int y){
+
+        List<Node> neighbors = new ArrayList<>();
+      
+            if(x < this.values.length - 1 && !this.visited[x + 1][y])
+                neighbors.add(new Node(x + 1, y));
+            
+            if(x > 0 && !this.visited[x - 1][y])
+                neighbors.add(new Node(x - 1, y));
+
+            if(y < this.values.length - 1 && !this.visited[x][y + 1])
+                neighbors.add(new Node(x, y + 1));
+
+            if(y > 0 && !this.visited[x][y - 1]) 
+                neighbors.add(new Node(x, y - 1));
+         
+        return neighbors;
+    }
 
     public void setSquareAsVisited(int x, int y, boolean visited) {
         try {
@@ -109,6 +169,5 @@ public class Maze extends JFrame {
             e.printStackTrace();
         }
     }
-
 
 }
