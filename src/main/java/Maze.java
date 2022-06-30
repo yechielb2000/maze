@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Stack;
-import java.util.stream.Collectors;
 
 public class Maze extends JFrame {
 
@@ -50,7 +49,7 @@ public class Maze extends JFrame {
         this.columns = values.length;
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        this.setLocationRelativeTo(null);
+    //    this.setLocationRelativeTo(null);
         GridLayout gridLayout = new GridLayout(rows, columns);
         this.setLayout(gridLayout);
         for (int i = 0; i < rows * columns; i++) {
@@ -74,34 +73,35 @@ public class Maze extends JFrame {
             boolean result = false;
             switch (this.algorithm) {
                 case Definitions.ALGORITHM_DFS:                   
-                    Stack<Node> stack = new Stack<Node>();
-                    stack.push(new Node(startRow, startColumn));                   
+                    Stack<Point> stack = new Stack<Point>();
+                    stack.push(new Point(startRow, startColumn));                   
                     result = runAlgorithm(stack);
                     break;
                     
                 case Definitions.ALGORITHM_BFS:                   
-                    Queue<Node> queue = new LinkedList<>();
-                    queue.add(new Node(startRow, startColumn));
+                    Queue<Point> queue = new LinkedList<>();
+                    queue.add(new Point(startRow, startColumn));
                     result = runAlgorithm(queue);                   
                     break;
             }
+
             JOptionPane.showMessageDialog(null,  result ? "FOUND SOLUTION" : "NO SOLUTION FOR THIS MAZE");
 
         }).start();
     }
 
-    private boolean runAlgorithm(Collection<Node> collection) {
+    private boolean runAlgorithm(Collection<Point> collection) {
 
         while (!collection.isEmpty()) {
-            
-            Node node;
+
+            Point point;
             if(collection instanceof Queue) {
-                node = ((Queue<Node>) collection).remove();
+                point = ((Queue<Point>) collection).remove();
             }else {
-                node = ((Stack<Node>) collection).pop();
+                point = ((Stack<Point>) collection).pop();
             }
             
-            int x = node.getPoint().x, y = node.getPoint().y;
+            int x = point.x, y = point.y;
 
             if(!this.visited[x][y]) {
                 setSquareAsVisited(x, y, true);
@@ -116,22 +116,22 @@ public class Maze extends JFrame {
         return false;
     }
 
-    private List<Node> findNeighbors(int x, int y){
+    private List<Point> findNeighbors(int x, int y){
 
-        List<Node> neighbors = new ArrayList<>();
+        List<Point> neighbors = new ArrayList<>();
       
-            if(x < this.values.length - 1 && !this.visited[x + 1][y])
-                neighbors.add(new Node(x + 1, y));
+        if(y < this.values.length - 1 && !this.visited[x][y + 1] && values[x][y + 1] == Definitions.EMPTY)
+            neighbors.add(new Point(x, y + 1));       
+        
+        if(x < this.values.length - 1 && !this.visited[x + 1][y] && values[x + 1][y] == Definitions.EMPTY)
+            neighbors.add(new Point(x + 1, y));
             
-            if(x > 0 && !this.visited[x - 1][y])
-                neighbors.add(new Node(x - 1, y));
-
-            if(y < this.values.length - 1 && !this.visited[x][y + 1])
-                neighbors.add(new Node(x, y + 1));
-
-            if(y > 0 && !this.visited[x][y - 1]) 
-                neighbors.add(new Node(x, y - 1));
+        if(y > 0 && !this.visited[x][y - 1] && values[x][y - 1] == Definitions.EMPTY) 
+            neighbors.add(new Point(x, y - 1));
          
+        if(x > 0 && !this.visited[x - 1][y] && values[x - 1][y] == Definitions.EMPTY)
+            neighbors.add(new Point(x - 1, y));    
+        
         return neighbors;
     }
 
@@ -169,5 +169,4 @@ public class Maze extends JFrame {
             e.printStackTrace();
         }
     }
-
 }
