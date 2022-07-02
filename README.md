@@ -1,7 +1,7 @@
 _Maze_
 ----
 
-_The application generates a maze and opens a new thread to solve it, it calls the `runAlgorithm` function and if it finds a solution it returns true, and if not it returns flase.
+_The application generates a maze and opens a new thread to solve it, it calls the `runAlgorithm` function and it returns true or false depends if it found a solution or not.
 and this is how we know if there is a solution to the maze._
 
 _Here is the algorithms function :_
