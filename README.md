@@ -32,10 +32,3 @@ private boolean runAlgorithm(Collection<Point> collection) {
 
     return false;     
 }
-
-```
-
-<h1 align="center">Here is an example for DFS algorithm !!</h1>
-
-<img src="https://user-images.githubusercontent.com/51932344/176753442-423826ab-5176-49a4-9531-f7104048ba79.png">
-
